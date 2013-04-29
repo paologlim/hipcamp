@@ -1,0 +1,14 @@
+basecamp:
+  username: paologlim
+  password: somepassword
+  resource_url: https://basecamp.com/123456/api/v1/projects/123456-project/events.json
+  app_name: hipcamp
+  last_event_id: 123456
+hipchat:
+  token: 123456789
+  channel: Announcements
+  color: green
+  message_fields:
+  - summary
+  - excerpt
+  message_format: "%s:%s<br/>%s"
