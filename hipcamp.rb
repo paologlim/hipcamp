@@ -12,16 +12,15 @@ end
 
 def fetch_basecamp_events(config)
   puts "-- Fetching Basecamp events"
-  url = "https://basecamp.com/%s/api/v1/projects/%s/events.json" % [config['id'], config['project_id']]
 
-  r = Curl::Easy.perform(url) do |curl|
+  r = Curl::Easy.perform(config['resource_url']) do |curl|
     curl.headers["User-Agent"] = config['app_name']
     curl.http_auth_types = :basic
     curl.username = config['username']
     curl.password = config['password']
   end
 
-  Yajl::Parser.parse(r.body_str, :symbolize_keys => true)
+  Yajl::Parser.parse(r.body_str)
 end
 
 def get_new_events(events, config)
@@ -29,7 +28,7 @@ def get_new_events(events, config)
 
   i = 0
 
-  while events[i][:id] != config["last_event_id"]
+  while events[i]['id'] != config["last_event_id"]
     new_events << events[i]
     i = i + 1
   end
@@ -43,9 +42,11 @@ def post_new_events(events, config)
   client = HipChat::Client.new(config['token'])
 
   events.each do |event|
-    msg = "%s:%s<br/>%s" % [event[:creator][:name], event[:summary], event[:excerpt]]
+    msg_fields = config['message_fields'].collect{ |f| event[f] }
+    msg = config['message_format'] % ([event['creator']['name']] + msg_fields)
     msg = fix_message(msg)
-    client[config['channel']].send('Hipcamp', msg, :color => config['color'])
+
+    client[config['channel']].send('Hipcamp', msg, :color => config['color'], :notify => true)
   end
 
   puts "-- Posting successfull!"
@@ -61,14 +62,14 @@ end
 def update_config(latest_event, config, config_file)
   puts "-- Updating config file"
 
-  config['basecamp']['last_event_id'] = latest_event[:id]
+  config['basecamp']['last_event_id'] = latest_event['id']
   f = File.open(config_file, "w+")
   f.write(YAML::dump(config))
   f.close
 end
 
 def main
-  config_file = "hipcamp.yml"
+  config_file = ARGV[0]
 
   puts "Running Hipcamp...\n"
 
