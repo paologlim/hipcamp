@@ -43,7 +43,7 @@ def post_new_events(events, config)
   client = HipChat::Client.new(config['token'])
 
   events.each do |event|
-    msg = "%s:%s\n%s" % [event[:creator][:name], event[:summary], event[:excerpt]]
+    msg = "%s:%s<br/>%s" % [event[:creator][:name], event[:summary], event[:excerpt]]
     msg = fix_message(msg)
     client[config['channel']].send('Hipcamp', msg)
   end
@@ -75,7 +75,7 @@ def main
   config = load_config(config_file)
   events = fetch_basecamp_events(config["basecamp"])
   new_events = get_new_events(events, config["basecamp"])
-  post_new_events(new_events, config["hipchat"])
+  post_new_events(new_events, config["hipchat"]) unless new_events.empty?
   update_config(new_events.first, config, config_file) unless new_events.empty?
 
   puts "\nDone!"
