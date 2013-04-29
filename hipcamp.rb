@@ -45,7 +45,7 @@ def post_new_events(events, config)
   events.each do |event|
     msg = "%s:%s<br/>%s" % [event[:creator][:name], event[:summary], event[:excerpt]]
     msg = fix_message(msg)
-    client[config['channel']].send('Hipcamp', msg)
+    client[config['channel']].send('Hipcamp', msg, :color => config['color'])
   end
 
   puts "-- Posting successfull!"
