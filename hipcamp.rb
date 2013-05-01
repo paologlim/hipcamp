@@ -4,6 +4,7 @@ require 'curb'
 require 'yajl'
 require 'yaml'
 require 'hipchat'
+require 'date'
 
 def load_config(config_file)
   puts "-- Loading config"
@@ -24,6 +25,17 @@ def fetch_basecamp_events(config)
 end
 
 def get_new_events(events, config)
+  case config['resource_type']
+  when 'project'
+    get_new_project_events(events, config)
+  when 'calendar'
+    get_new_calendar_events(events)
+  else
+    raise "Unknown resource type"
+  end
+end
+
+def get_new_project_events(events, config)
   new_events = []
 
   i = 0
@@ -34,6 +46,13 @@ def get_new_events(events, config)
   end
 
   new_events
+end
+
+def get_new_calendar_events(events)
+  events.select do |e|
+    event_date = Date.parse e['starts_at']
+    event_date <= Date.today
+  end
 end
 
 def post_new_events(events, config)
@@ -60,12 +79,14 @@ def fix_message(msg)
 end
 
 def update_config(latest_event, config, config_file)
-  puts "-- Updating config file"
+  if config['basecamp']['resource_type'] == "project"
+    puts "-- Updating config file"
 
-  config['basecamp']['last_event_id'] = latest_event['id']
-  f = File.open(config_file, "w+")
-  f.write(YAML::dump(config))
-  f.close
+    config['basecamp']['last_event_id'] = latest_event['id']
+    f = File.open(config_file, "w+")
+    f.write(YAML::dump(config))
+    f.close
+  end
 end
 
 def main

@@ -8,10 +8,15 @@ basecamp:
   # ref: https://github.com/37signals/bcx-api/
   resource_url: https://basecamp.com/123456/api/v1/projects/123456-project/events.json
 
+  # The type of events to fetch
+  # Types: project, calendar
+  resource_type: project
+
   # Just a name passed on to basecamp. Can be anything.
   app_name: hipcamp
 
   # The latest event id from the events returned by the resource url
+  # This is only applicable for project type events
   last_event_id: 123456
 hipchat:
 
