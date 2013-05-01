@@ -71,7 +71,8 @@ end
 def post_message(client, msg, config)
   opts = {
     :color  => config['color'],
-    :notify => true }
+    :notify => true,
+    :message_format => 'text' }
 
   client[config['channel']].send('Hipcamp',
                                  msg,
