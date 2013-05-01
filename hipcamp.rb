@@ -61,14 +61,27 @@ def post_new_events(events, config)
   client = HipChat::Client.new(config['token'])
 
   events.each do |event|
-    msg_fields = config['message_fields'].collect{ |f| event[f] }
-    msg = config['message_format'] % ([event['creator']['name']] + msg_fields)
-    msg = fix_message(msg)
-
-    client[config['channel']].send('Hipcamp', msg, :color => config['color'], :notify => true)
+    msg = build_message(event, config)
+    post_message(client, msg, config)
   end
 
   puts "-- Posting successfull!"
+end
+
+def post_message(client, msg, config)
+  opts = {
+    :color  => config['color'],
+    :notify => true }
+
+  client[config['channel']].send('Hipcamp',
+                                 msg,
+                                 opts)
+end
+
+def build_message(event, config)
+  msg_fields = config['message_fields'].collect{ |f| event[f] }
+  msg = config['message_format'] % ([event['creator']['name']] + msg_fields)
+  fix_message(msg)
 end
 
 def fix_message(msg)
