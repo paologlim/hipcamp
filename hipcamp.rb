@@ -72,7 +72,7 @@ def post_message(client, msg, config)
   opts = {
     :color  => config['color'],
     :notify => true,
-    :message_format => 'text' }
+    :message_format => config['message_format'] }
 
   client[config['channel']].send('Hipcamp',
                                  msg,
@@ -81,7 +81,7 @@ end
 
 def build_message(event, config)
   msg_fields = config['message_fields'].collect{ |f| event[f] }
-  msg = config['message_format'] % ([event['creator']['name']] + msg_fields)
+  msg = config['message_template'] % ([event['creator']['name']] + msg_fields)
   fix_message(msg)
 end
 

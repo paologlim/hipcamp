@@ -17,6 +17,7 @@ Todo
 
 * Organize code into modules
 * Add support for basecamp tokens, instead of using basic authentication
+* Display dates in a pretty format
 
 References
 ----------

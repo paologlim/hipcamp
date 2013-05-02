@@ -9,7 +9,7 @@ basecamp:
   resource_url: https://basecamp.com/123456/api/v1/projects/123456-project/events.json
 
   # The type of events to fetch
-  # Types: project, calendar
+  # Options: project, calendar
   resource_type: project
 
   # Just a name passed on to basecamp. Can be anything.
@@ -34,5 +34,9 @@ hipchat:
   - summary
   - excerpt
 
-  # Format of the messages
-  message_format: "%s:%s<br/>%s"
+  # Template of messages
+  message_template: "%s:%s<br/>%s"
+
+  # The display format of messages
+  # Options: html, text
+  message_format: text
