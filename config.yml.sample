@@ -12,6 +12,11 @@ basecamp:
   # Options: project, calendar
   resource_type: project
 
+  # The date of the events to fetch.
+  # Only applicable to calendar resource type
+  # Options: today, tomorrow
+  event_date: today
+
   # Just a name passed on to basecamp. Can be anything.
   app_name: hipcamp
 
@@ -40,3 +45,6 @@ hipchat:
   # The display format of messages
   # Options: html, text
   message_format: text
+
+  # Include the creator name of the event in the message
+  include_creator: false

@@ -29,7 +29,7 @@ def get_new_events(events, config)
   when 'project'
     get_new_project_events(events, config)
   when 'calendar'
-    get_new_calendar_events(events)
+    get_new_calendar_events(events, config)
   else
     raise "Unknown resource type"
   end
@@ -48,10 +48,17 @@ def get_new_project_events(events, config)
   new_events
 end
 
-def get_new_calendar_events(events)
+def get_new_calendar_events(events, config)
   events.select do |e|
     event_date = Date.parse e['starts_at']
-    event_date <= Date.today
+    case config['event_date']
+    when 'today'
+      event_date <= Date.today
+    when 'tomorrow'
+      event_date == (Date.today + 1)
+    else
+      raise "Event date not defined."
+    end
   end
 end
 
@@ -80,8 +87,11 @@ def post_message(client, msg, config)
 end
 
 def build_message(event, config)
-  msg_fields = config['message_fields'].collect{ |f| event[f] }
-  msg = config['message_template'] % ([event['creator']['name']] + msg_fields)
+  msg_fields = []
+  msg_fields = [event['creator']['name']] if config["include_creator"]
+  msg_fields = msg_fields + config['message_fields'].collect{ |f| event[f] }
+
+  msg = config['message_template'] % msg_fields
   fix_message(msg)
 end
 
